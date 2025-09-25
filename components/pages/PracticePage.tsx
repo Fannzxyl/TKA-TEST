@@ -9,12 +9,16 @@ export const PracticePage: React.FC = () => {
     const { state, dispatch } = useAppContext();
     const [type, setType] = useState<QuestionType | ''>('');
     const [source, setSource] = useState<'Lokal' | 'Gemini' | 'Campuran'>('Lokal');
-    const [count, setCount] = useState<5 | 10>(5);
+    const [count, setCount] = useState<number>(5);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleStart = async () => {
         if (!type) {
             dispatch({ type: 'SHOW_TOAST', payload: { message: 'Pilih jenis soal terlebih dahulu', type: 'error' } });
+            return;
+        }
+        if (count < 1 || count > 50) {
+            dispatch({ type: 'SHOW_TOAST', payload: { message: 'Jumlah soal harus antara 1 dan 50', type: 'error' } });
             return;
         }
 
@@ -76,9 +80,9 @@ export const PracticePage: React.FC = () => {
                 
                 <div>
                     <label className="block font-medium mb-2">Pilih Sumber Soal</label>
-                    <div className="flex space-x-2 rounded-lg bg-gray-200 p-1">
+                    <div className="flex rounded-lg border border-gray-300 p-1">
                         {(['Lokal', 'Gemini', 'Campuran'] as const).map(s => (
-                            <button key={s} onClick={() => setSource(s)} className={`w-full py-2 rounded-md font-semibold transition ${source === s ? 'bg-white shadow' : 'text-gray-600'}`}>
+                            <button key={s} onClick={() => setSource(s)} className={`w-full py-2 rounded-md font-semibold transition ${source === s ? 'bg-primary text-white' : 'text-gray-600 hover:bg-primary/10'}`}>
                                 {s}
                             </button>
                         ))}
@@ -87,14 +91,32 @@ export const PracticePage: React.FC = () => {
                 </div>
                 
                 <div>
-                    <label className="block font-medium mb-2">Jumlah Soal</label>
-                     <div className="flex space-x-2 rounded-lg bg-gray-200 p-1">
-                        {[5, 10].map(n => (
-                            <button key={n} onClick={() => setCount(n as 5 | 10)} className={`w-full py-2 rounded-md font-semibold transition ${count === n ? 'bg-white shadow' : 'text-gray-600'}`}>
-                                {n} Soal
-                            </button>
-                        ))}
-                    </div>
+                    <label htmlFor="question-count" className="block font-medium mb-2">Jumlah Soal</label>
+                    <input
+                        id="question-count"
+                        type="number"
+                        value={count}
+                        onChange={(e) => {
+                            const num = parseInt(e.target.value, 10);
+                            if (!isNaN(num)) {
+                                setCount(num);
+                            } else if (e.target.value === '') {
+                                // Allow clearing the input, default to 1 logically
+                                setCount(1);
+                            }
+                        }}
+                        onBlur={() => {
+                            if (count < 1) {
+                                setCount(1);
+                            } else if (count > 50) {
+                                setCount(50);
+                            }
+                        }}
+                        className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
+                        min="1"
+                        max="50"
+                        placeholder="Contoh: 10"
+                    />
                 </div>
 
                 <button 
