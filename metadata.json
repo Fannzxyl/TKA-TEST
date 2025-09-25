@@ -1,0 +1,5 @@
+{
+  "name": "Persiapan TKA Bahasa Jepang 2025",
+  "description": "A lightweight, mobile-first PWA to help users prepare for the 2025 Japanese TKA. Features practice for particles, vocabulary, and various TKA-style questions with a focus on Hiragana and Katakana.",
+  "requestFramePermissions": []
+}
