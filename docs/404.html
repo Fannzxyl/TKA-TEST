@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Persiapan TKA Bahasa Jepang 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+      body {
+        font-family: 'system-ui', 'Noto Sans JP', sans-serif;
+      }
+      /* Custom focus ring for accessibility */
+      *:focus-visible {
+        outline: 2px solid #2563EB;
+        outline-offset: 2px;
+      }
+      /* Custom high-contrast styles */
+      .high-contrast {
+        --color-bg: #000000;
+        --color-text: #FFFFFF;
+        --color-card: #111827;
+        --color-primary: #38BDF8; /* Light Blue for contrast */
+        --color-accent: #34D399; /* Emerald for contrast */
+        --color-border: #4B5563;
+      }
+      .high-contrast body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+      }
+      .high-contrast .bg-card { background-color: var(--color-card); }
+      .high-contrast .text-main { color: var(--color-text); }
+      .high-contrast .border-main { border-color: var(--color-border); }
+      .high-contrast .bg-primary { background-color: var(--color-primary); }
+      .high-contrast .text-primary { color: var(--color-primary); }
+      .high-contrast .bg-accent { background-color: var(--color-accent); }
+      .high-contrast .text-accent { color: var(--color-accent); }
+      .high-contrast .shadow-md { box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06); }
+
+      /* Animation for correct/incorrect answers */
+      @keyframes pulse-correct {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.04); }
+      }
+      .animate-pulse-correct {
+        animation: pulse-correct 0.6s ease-in-out;
+      }
+
+      @keyframes shake-incorrect {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+        20%, 40%, 60%, 80% { transform: translateX(4px); }
+      }
+      .animate-shake-incorrect {
+        animation: shake-incorrect 0.6s ease-in-out;
+      }
+    </style>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/assets/index-BZAcVW1K.js"></script>
+</head>
+  <body class="bg-gray-50 text-gray-900">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>
+      // Basic PWA service worker registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // A real app would have a sw.js file. For this context, we just log.
+          console.log('PWA Service Worker registration can be placed here.');
+          /*
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+          */
+        });
+      }
+    </script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 600,
+        once: true,
+      });
+    </script>
+  </body>
+</html>
