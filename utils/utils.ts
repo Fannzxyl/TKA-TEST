@@ -1,4 +1,3 @@
-// Fix: Corrected import paths from './' to '../' to properly locate type definitions and data. This resolves type inference issues.
 import { Question, QuestionType, Settings, HistoryEntry, Vocab } from '../types';
 import { localQuestions } from '../data/db';
 
@@ -14,7 +13,6 @@ export function secureRandom() {
 }
 
 // Fisher-Yates shuffle algorithm
-// Fix: Corrected a typo in the generic signature from <T,> to <T>.
 export function shuffle<T>(array: T[]): T[] {
   const newArray = [...array];
   let currentIndex = newArray.length, randomIndex;

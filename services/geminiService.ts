@@ -44,9 +44,10 @@ Tema: "${tema}"
 Buat soal yang berbeda dari sebelumnya.`;
 
   try {
+    // FIX: Corrected the `contents` parameter to be a simple string as per SDK guidelines.
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        contents: userPrompt,
         config: {
             systemInstruction: systemPrompt,
             responseMimeType: "application/json",
@@ -101,10 +102,14 @@ Buat soal yang berbeda dari sebelumnya.`;
 export async function testApiKey(apiKey: string): Promise<boolean> {
   try {
     const ai = new GoogleGenAI({ apiKey });
+    // FIX: Added `thinkingConfig` to avoid issues with `maxOutputTokens` as per SDK guidelines.
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: "test",
-        config: { maxOutputTokens: 5 }
+        config: { 
+            maxOutputTokens: 5,
+            thinkingConfig: { thinkingBudget: 0 }
+        }
     });
     return !!response.text;
   } catch (error) {

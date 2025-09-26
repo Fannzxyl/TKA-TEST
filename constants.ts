@@ -9,14 +9,6 @@ export const TABS = [
   { id: 'pengaturan', label: 'Pengaturan' },
 ];
 
-export const COLORS = {
-  primary: '#2563EB',
-  accent: '#10B981',
-  text: '#111827',
-  background: '#F9FAFB',
-  card: '#FFFFFF',
-};
-
 export const VOCAB_THEMES = [
     "Sekolah", "Keluarga", "Makanan/Minuman", "Waktu/Hari", "Tempat", "Hobi/Olahraga", "Umum"
 ];

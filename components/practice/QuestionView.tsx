@@ -1,180 +1,105 @@
 
 import React, { useState, useEffect } from 'react';
 import { Question } from '../../types';
+import { JapaneseText } from '../common/JapaneseText';
 import { useAppContext } from '../../context/AppContext';
 
 interface QuestionViewProps {
   question: Question;
   onAnswer: (answer: string[]) => void;
-  isAnswered: boolean;
+  userAnswer: string[] | null;
 }
 
-const ChoiceButton: React.FC<{
-  text: string;
-  onClick: () => void;
-  isSelected: boolean;
-  isCorrect?: boolean;
-  isIncorrect?: boolean;
-}> = ({ text, onClick, isSelected, isCorrect, isIncorrect }) => {
-  let bgClass = 'bg-card hover:bg-blue-100';
-  if (isSelected) bgClass = 'bg-blue-200 ring-2 ring-primary';
-  if (isCorrect) bgClass = 'bg-green-200 text-green-900 ring-2 ring-green-500';
-  if (isIncorrect) bgClass = 'bg-red-200 text-red-900 ring-2 ring-red-500';
-
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full text-left p-4 rounded-xl border border-main/20 text-main transition ${bgClass}`}
-      disabled={isCorrect !== undefined}
-    >
-      {text}
-    </button>
-  );
-};
-
-export const QuestionView: React.FC<QuestionViewProps> = ({ question, onAnswer, isAnswered }) => {
+const QuestionView: React.FC<QuestionViewProps> = ({ question, onAnswer, userAnswer }) => {
     const { state } = useAppContext();
-    const [selected, setSelected] = useState<string[]>([]);
-    const allowMultiple = question.correctKeys.length > 1;
-
-    useEffect(() => {
-        setSelected([]);
-    }, [question]);
-
-    useEffect(() => {
-        onAnswer(selected);
-    }, [selected, onAnswer]);
-
-    const handleSelect = (choice: string) => {
-        if (isAnswered) return;
-        if (allowMultiple) {
-            setSelected(prev =>
-                prev.includes(choice) ? prev.filter(c => c !== choice) : [...prev, choice]
-            );
-        } else {
-            setSelected([choice]);
-        }
-    };
+    const [selectedOrdering, setSelectedOrdering] = useState<string[]>([]);
     
-    const handleOrderingDrop = (draggedToken: string, targetToken: string) => {
-        const newSelected = [...selected];
-        const draggedIndex = newSelected.indexOf(draggedToken);
-        const targetIndex = newSelected.indexOf(targetToken);
+    useEffect(() => {
+        setSelectedOrdering([]);
+    }, [question.id]);
 
-        // Simple swap for this implementation
-        [newSelected[draggedIndex], newSelected[targetIndex]] = [newSelected[targetIndex], newSelected[draggedIndex]];
-        setSelected(newSelected);
+    const handleChoiceClick = (choice: string) => {
+        if (userAnswer) return; // Don't allow changes after submission for this model
+        onAnswer([choice]);
     };
 
-    useEffect(() => {
-      if (question.type === 'ordering' && question.tokens) {
-        setSelected(question.tokens);
-      }
-    }, [question]);
+    const handleOrderingClick = (token: string) => {
+        if (userAnswer) return;
+        const newOrder = [...selectedOrdering, token];
+        setSelectedOrdering(newOrder);
+        onAnswer(newOrder);
+    };
 
-    const renderChoices = () => {
-        if (!question.choices) return null;
-        return (
-            <div className="space-y-3">
-                {question.choices.map((choice, index) => {
-                    const choiceId = String(choice);
-                    const isCorrect = isAnswered ? question.correctKeys.includes(choiceId) : undefined;
-                    const isIncorrect = isAnswered && selected.includes(choiceId) && !isCorrect ? true : undefined;
-
-                    return (
-                        <ChoiceButton
-                            key={index}
-                            text={choice}
-                            onClick={() => handleSelect(choiceId)}
-                            isSelected={selected.includes(choiceId)}
-                            isCorrect={isCorrect}
-                            isIncorrect={isIncorrect}
-                        />
-                    );
-                })}
-            </div>
-        );
+    const resetOrdering = () => {
+        setSelectedOrdering([]);
+        onAnswer([]);
     };
     
-    const renderOrdering = () => {
-        if (!question.tokens) return null;
-        
-        const [dragged, setDragged] = useState<string | null>(null);
+    const renderQuestionType = () => {
+        const baseButtonClass = "w-full p-3 my-1 text-left rounded-lg border-2 transition-colors";
+        const selectedButtonClass = "bg-indigo-200 dark:bg-indigo-800 border-indigo-500";
+        const unselectedButtonClass = "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600";
+        const disabledButtonClass = "disabled:opacity-50 disabled:cursor-not-allowed";
 
-        const handleDragStart = (token: string) => setDragged(token);
-        const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
-        const handleDrop = (targetToken: string) => {
-            if(dragged && !isAnswered) {
-                handleOrderingDrop(dragged, targetToken);
-            }
-            setDragged(null);
-        }
-
-        return (
-            <div className="space-y-3">
-                <p className="text-sm text-gray-500">Susun kata-kata berikut menjadi kalimat yang benar.</p>
-                <div className="p-4 bg-gray-100 rounded-lg min-h-[50px] flex flex-wrap gap-2">
-                    {selected.map((token, index) => {
-                        const isCorrect = isAnswered ? question.correctKeys[index] === token : undefined;
-                        let tokenBg = 'bg-white cursor-move';
-                        if(isAnswered) {
-                           tokenBg = isCorrect ? 'bg-green-200' : 'bg-red-200';
-                        }
-                        return (
-                            <div
-                                key={index}
-                                draggable={!isAnswered}
-                                onDragStart={() => handleDragStart(token)}
-                                onDragOver={handleDragOver}
-                                onDrop={() => handleDrop(token)}
-                                className={`px-4 py-2 rounded-lg shadow-sm border border-gray-300 ${tokenBg}`}
-                            >
-                                {token}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-        );
-    }
-    
-    const renderKana = () => {
-        if(question.kana_question) {
-            return (
-                <div>
-                    <div className="text-6xl font-bold text-center my-8 text-main">{question.kana_question}</div>
-                    {renderChoices()}
-                </div>
-            );
-        }
-        if(question.romaji_answer) {
-             return (
-                <div>
-                    <div className="text-5xl font-bold text-center my-8 text-main">{question.romaji_answer}</div>
-                    {renderChoices()}
-                </div>
-            );
-        }
-        return null;
-    }
-
-    const renderContent = () => {
         switch (question.type) {
-            case 'ordering': return renderOrdering();
-            case 'kana': return renderKana();
             case 'cloze':
             case 'particle':
-            case 'tf':
             case 'mc':
-            default: return renderChoices();
+            case 'tf':
+            case 'kana':
+                return (
+                    <div className="space-y-2">
+                        {question.choices?.map((choice, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleChoiceClick(choice)}
+                                disabled={!!userAnswer}
+                                className={`${baseButtonClass} ${userAnswer?.includes(choice) ? selectedButtonClass : unselectedButtonClass} ${disabledButtonClass}`}
+                            >
+                                {question.type === 'kana' && question.romaji_answer ? choice : <JapaneseText jp={choice} kana={choice} />}
+                            </button>
+                        ))}
+                    </div>
+                );
+
+            case 'ordering':
+                const remainingTokens = question.tokens?.filter(t => !selectedOrdering.includes(t)) || [];
+                return (
+                    <div>
+                        <div className="h-16 p-2 mb-4 border-2 border-dashed rounded-md flex items-center space-x-2 bg-gray-50 dark:bg-gray-700">
+                            {selectedOrdering.map((token, index) => (
+                                <span key={index} className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded">
+                                    <JapaneseText jp={token} kana={token} />
+                                </span>
+                            ))}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {remainingTokens.map((token, index) => (
+                                <button key={index} onClick={() => handleOrderingClick(token)} className="p-2 bg-white dark:bg-gray-700 border-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <JapaneseText jp={token} kana={token} />
+                                </button>
+                            ))}
+                        </div>
+                        <button onClick={resetOrdering} disabled={!!userAnswer} className="mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Reset</button>
+                    </div>
+                );
+            
+            default:
+                return <p>Tipe soal tidak dikenal.</p>;
         }
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto">
-            {question.passage && <p className="mb-4 p-4 bg-gray-100 rounded-lg text-gray-700">{question.passage}</p>}
-            <h2 className="text-2xl md:text-3xl font-bold text-main mb-6 text-center">{question.stem}</h2>
-            {renderContent()}
+        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            {question.passage && <p className="mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-md italic">"{question.passage}"</p>}
+            <div className="text-xl mb-6">
+                {question.stem && <JapaneseText jp={question.stem} kana={question.stem} />}
+                {question.kana_question && <span className="text-4xl font-bold">{question.kana_question}</span>}
+                {question.romaji_answer && <p>Tuliskan <span className="font-bold text-indigo-500">{question.romaji_answer}</span> dalam hiragana/katakana.</p>}
+            </div>
+            {renderQuestionType()}
         </div>
     );
 };
+
+export default QuestionView;

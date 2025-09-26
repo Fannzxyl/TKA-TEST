@@ -1,118 +1,103 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { Settings } from '../../types';
 import { testApiKey } from '../../services/geminiService';
 
-const Toggle: React.FC<{ label: string; enabled: boolean; onChange: (enabled: boolean) => void; description?: string }> = ({ label, enabled, onChange, description }) => (
-    <div className="flex items-center justify-between py-3">
-        <div>
-            <label className="font-medium text-main">{label}</label>
-            {description && <p className="text-sm text-gray-500">{description}</p>}
-        </div>
-        <button
-            onClick={() => onChange(!enabled)}
-            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${enabled ? 'bg-primary' : 'bg-gray-200'}`}
-        >
-            <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
-        </button>
-    </div>
-);
-
-export const SettingsPage: React.FC = () => {
+const SettingsPage: React.FC = () => {
     const { state, dispatch } = useAppContext();
-    const [apiKeyInput, setApiKeyInput] = useState(state.settings.apiKey || '');
-    const [isTestingKey, setIsTestingKey] = useState(false);
+    const [settings, setSettings] = useState<Settings>(state.settings);
+    const [apiKeyStatus, setApiKeyStatus] = useState<'idle' | 'testing' | 'valid' | 'invalid'>('idle');
 
-    const handleSettingChange = <K extends keyof Settings,>(key: K, value: Settings[K]) => {
-        dispatch({ type: 'SAVE_SETTINGS', payload: { [key]: value } });
-    };
-
-    const handleApiKeySave = () => {
-        handleSettingChange('apiKey', apiKeyInput);
-        dispatch({ type: 'SHOW_TOAST', payload: { message: 'API Key disimpan', type: 'success' } });
-    };
-    
-    const handleTestApiKey = async () => {
-        setIsTestingKey(true);
-        const isValid = await testApiKey(apiKeyInput);
-        if (isValid) {
-            dispatch({ type: 'SHOW_TOAST', payload: { message: 'API Key valid dan berfungsi!', type: 'success' } });
-        } else {
-            dispatch({ type: 'SHOW_TOAST', payload: { message: 'API Key tidak valid atau gagal terhubung.', type: 'error' } });
+    useEffect(() => {
+        setSettings(state.settings);
+        if (state.settings.apiKey) {
+            setApiKeyStatus('idle');
         }
-        setIsTestingKey(false);
+    }, [state.settings]);
+
+    const handleSave = () => {
+        dispatch({ type: 'SAVE_SETTINGS', payload: settings });
+        dispatch({ type: 'SHOW_TOAST', payload: { message: 'Pengaturan berhasil disimpan!', type: 'success' } });
+    };
+
+    const handleApiKeyTest = async () => {
+        if (!settings.apiKey) {
+            setApiKeyStatus('invalid');
+            return;
+        }
+        setApiKeyStatus('testing');
+        const isValid = await testApiKey(settings.apiKey);
+        setApiKeyStatus(isValid ? 'valid' : 'invalid');
+        if (isValid) {
+            dispatch({ type: 'SHOW_TOAST', payload: { message: 'API Key valid!', type: 'success' } });
+        } else {
+             dispatch({ type: 'SHOW_TOAST', payload: { message: 'API Key tidak valid.', type: 'error' } });
+        }
+    };
+
+    const handleCheckboxChange = (key: keyof Settings, value: boolean) => {
+        setSettings(prev => ({ ...prev, [key]: value }));
     };
 
     return (
-        <div className="p-4 md:p-6 space-y-8 max-w-2xl mx-auto animate-fade-in">
-            <h1 className="text-3xl font-bold text-center text-main">Pengaturan</h1>
-
-            <div className="bg-card text-main p-6 rounded-2xl shadow-md border border-main/10 divide-y divide-gray-200">
-                <h2 className="text-xl font-bold mb-2">Tampilan Teks Jepang</h2>
-                <Toggle
-                    label="Mode Kana-Saja"
-                    description="Tampilkan semua teks dalam Hiragana/Katakana."
-                    enabled={state.settings.kanaOnly && !state.settings.showKanji}
-                    onChange={(e) => {
-                        handleSettingChange('kanaOnly', e);
-                        if (e) handleSettingChange('showKanji', false);
-                    }}
-                />
-                <Toggle
-                    label="Tampilkan Kanji"
-                    description="Tampilkan kanji jika tersedia."
-                    enabled={state.settings.showKanji}
-                    onChange={(e) => {
-                        handleSettingChange('showKanji', e);
-                        if(e) handleSettingChange('kanaOnly', false);
-                    }}
-                />
-                <Toggle
-                    label="Tampilkan Furigana"
-                    description="Tampilkan cara baca di atas kanji (membutuhkan 'Tampilkan Kanji' aktif)."
-                    enabled={state.settings.showFurigana && state.settings.showKanji}
-                    onChange={(e) => handleSettingChange('showFurigana', e)}
-                />
+        <div className="max-w-2xl mx-auto space-y-8">
+            <h1 className="text-3xl font-bold">Pengaturan</h1>
+            
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+                <h2 className="text-xl font-semibold border-b pb-2 dark:border-gray-600">Tampilan Latihan</h2>
+                
+                <div className="flex items-center justify-between">
+                    <label htmlFor="showKanji" className="font-medium">Tampilkan Kanji</label>
+                    <input type="checkbox" id="showKanji" checked={settings.showKanji} onChange={e => handleCheckboxChange('showKanji', e.target.checked)} className="form-checkbox h-6 w-6 text-indigo-600 rounded" />
+                </div>
+                
+                <div className={`flex items-center justify-between ${!settings.showKanji ? 'opacity-50' : ''}`}>
+                    <label htmlFor="showFurigana" className="font-medium">Tampilkan Furigana</label>
+                    <input type="checkbox" id="showFurigana" disabled={!settings.showKanji} checked={settings.showFurigana} onChange={e => handleCheckboxChange('showFurigana', e.target.checked)} className="form-checkbox h-6 w-6 text-indigo-600 rounded" />
+                </div>
+                
+                <h2 className="text-xl font-semibold border-b pb-2 dark:border-gray-600">Lainnya</h2>
+                <div className="flex items-center justify-between">
+                    <label htmlFor="sound" className="font-medium">Efek Suara</label>
+                    <input type="checkbox" id="sound" checked={settings.sound} onChange={e => handleCheckboxChange('sound', e.target.checked)} className="form-checkbox h-6 w-6 text-indigo-600 rounded" />
+                </div>
+                 <div className="flex items-center justify-between">
+                    <label htmlFor="highContrast" className="font-medium">Kontras Tinggi</label>
+                    <input type="checkbox" id="highContrast" checked={settings.highContrast} onChange={e => handleCheckboxChange('highContrast', e.target.checked)} className="form-checkbox h-6 w-6 text-indigo-600 rounded" />
+                </div>
             </div>
 
-            <div className="bg-card text-main p-6 rounded-2xl shadow-md border border-main/10 divide-y divide-gray-200">
-                 <h2 className="text-xl font-bold mb-2">Lainnya</h2>
-                 <Toggle
-                    label="Mode Kontras Tinggi"
-                    description="Gunakan tema warna dengan kontras lebih tinggi."
-                    enabled={state.settings.highContrast}
-                    onChange={(e) => handleSettingChange('highContrast', e)}
-                />
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-4">
+                 <h2 className="text-xl font-semibold border-b pb-2 dark:border-gray-600">Integrasi Gemini AI</h2>
+                 <p className="text-sm text-gray-600 dark:text-gray-400">Dapatkan soal latihan tak terbatas yang dibuat oleh AI. Fitur ini masih dalam tahap eksperimen.</p>
+                 <div>
+                    <label htmlFor="apiKey" className="block font-medium mb-1">Google AI API Key</label>
+                    <div className="flex gap-2">
+                        <input 
+                            type="password" 
+                            id="apiKey" 
+                            placeholder="Masukkan API Key Anda" 
+                            value={settings.apiKey || ''} 
+                            onChange={e => setSettings(s => ({ ...s, apiKey: e.target.value }))}
+                            className="flex-grow p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <button onClick={handleApiKeyTest} disabled={apiKeyStatus === 'testing'} className="bg-gray-200 dark:bg-gray-600 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50">
+                            {apiKeyStatus === 'testing' ? 'Menguji...' : 'Uji'}
+                        </button>
+                    </div>
+                    {apiKeyStatus === 'valid' && <p className="text-green-600 text-sm mt-1">API Key valid.</p>}
+                    {apiKeyStatus === 'invalid' && <p className="text-red-600 text-sm mt-1">API Key tidak valid atau gagal diuji.</p>}
+                 </div>
             </div>
 
-            <div className="bg-card text-main p-6 rounded-2xl shadow-md border border-main/10 space-y-4">
-                <h2 className="text-xl font-bold">Integrasi Gemini</h2>
-                 <p className="text-sm text-gray-500">Masukkan API Key Google Gemini Anda untuk mendapatkan soal-soal yang dibuat secara dinamis. Kunci disimpan di perangkat Anda dan tidak dikirim ke server kami.</p>
-                <div>
-                    <label htmlFor="api-key" className="block font-medium mb-1">Gemini API Key</label>
-                    <input
-                        id="api-key"
-                        type="password"
-                        value={apiKeyInput}
-                        onChange={(e) => setApiKeyInput(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50"
-                        placeholder="Masukkan API Key..."
-                    />
-                </div>
-                <div className="flex gap-4">
-                    <button onClick={handleApiKeySave} className="bg-primary text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
-                        Simpan
-                    </button>
-                    <button 
-                        onClick={handleTestApiKey} 
-                        disabled={isTestingKey || !apiKeyInput}
-                        className="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition disabled:bg-gray-300"
-                    >
-                        {isTestingKey ? 'Menguji...' : 'Test API'}
-                    </button>
-                </div>
+            <div className="flex justify-end">
+                <button onClick={handleSave} className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">
+                    Simpan Pengaturan
+                </button>
             </div>
         </div>
     );
 };
+
+export default SettingsPage;

@@ -97,7 +97,7 @@ export const localQuestions: Question[] = [
     // Particle
     { id: "q_p01", type: "particle", stem: "わたし＿がくせいです。", choices: ["は", "が", "を", "に"], correctKeys: ["は"], explain: "Partikel 'は' (wa) digunakan untuk menandai topik kalimat." },
     { id: "q_p02", type: "particle", stem: "ごはん＿たべます。", choices: ["を", "で", "と", "も"], correctKeys: ["を"], explain: "Partikel 'を' (o) digunakan untuk menandai objek dari kata kerja transitif." },
-    { id: "q_p03", type: "particle", stem: "がっこう＿いきます。", choices: ["に", "へ", "で", "から"], correctKeys: ["に", "へ"], explain: "Partikel 'に' (ni) atau 'へ' (e) digunakan untuk menunjukkan arah atau tujuan pergerakan." },
+    { id: "q_p03", type: "particle", stem: "がっこう＿いきます。", choices: ["に", "へ", "で", "から"], correctKeys: ["に"], explain: "Partikel 'に' (ni) digunakan untuk menunjukkan arah atau tujuan pergerakan. Partikel 'へ' (e) juga bisa digunakan dalam konteks ini." },
     { id: "q_p04", type: "particle", stem: "としょかん＿べんきょうします。", choices: ["で", "に", "を", "の"], correctKeys: ["で"], explain: "Partikel 'で' (de) digunakan untuk menunjukkan tempat di mana suatu aksi terjadi." },
     { id: "q_p05", type: "particle", stem: "わたし＿ほんです。", choices: ["の", "が", "は", "も"], correctKeys: ["の"], explain: "Partikel 'の' (no) digunakan untuk menunjukkan kepemilikan." },
     { id: "q_p06", type: "particle", stem: "えき＿ともだちにあいます。", choices: ["で", "に", "へ", "と"], correctKeys: ["で"], explain: "Partikel 'で' (de) menunjukkan lokasi aksi 'bertemu'." },
