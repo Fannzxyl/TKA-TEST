@@ -20,6 +20,8 @@ export interface Vocab {
 
 export type QuestionType = "cloze" | "particle" | "ordering" | "tf" | "mc" | "kana";
 
+export type KanaSet = "hiragana_basic" | "hiragana_advanced" | "katakana_basic" | "katakana_advanced";
+
 export interface Question {
   id: string;
   type: QuestionType;
@@ -34,6 +36,7 @@ export interface Question {
   // For kana questions
   kana_question?: string; 
   romaji_answer?: string;
+  kana_set?: KanaSet;
 }
 
 export interface Settings {

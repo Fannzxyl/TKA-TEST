@@ -1,4 +1,4 @@
-import { Question, QuestionType, Settings, HistoryEntry, Vocab } from '../types';
+import { Question, QuestionType, Settings, HistoryEntry, Vocab, KanaSet } from '../types';
 import { localQuestions } from '../data/db';
 
 // Secure random number generator with fallback
@@ -32,13 +32,18 @@ export function getRandomQuestions(
   count: number,
   type?: QuestionType,
   source: 'Lokal' | 'Gemini' | 'Campuran' = 'Lokal',
-  excludeIds: string[] = []
+  excludeIds: string[] = [],
+  kanaSets?: KanaSet[]
 ): Question[] {
   // For now, we only implement local question generation
   let questionPool = localQuestions.filter(q => !excludeIds.includes(q.id));
   
   if (type) {
     questionPool = questionPool.filter(q => q.type === type);
+  }
+
+  if (type === 'kana' && kanaSets && kanaSets.length > 0) {
+    questionPool = questionPool.filter(q => q.kana_set && kanaSets.includes(q.kana_set));
   }
 
   const shuffled = shuffle(questionPool);

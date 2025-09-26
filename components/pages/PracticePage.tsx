@@ -2,20 +2,47 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { QUESTION_TYPES } from '../../constants';
-import { QuestionType } from '../../types';
+import { QuestionType, KanaSet } from '../../types';
 import { getRandomQuestions } from '../../utils/utils';
 import QuestionView from '../practice/QuestionView';
 import { CheckCircleIcon, XCircleIcon, ArrowRightIcon } from '../common/Icon';
 import { JapaneseText } from '../common/JapaneseText';
+
+const KANA_SETS: { id: KanaSet; name: string }[] = [
+    { id: 'hiragana_basic', name: 'Hiragana Dasar' },
+    { id: 'hiragana_advanced', name: 'Hiragana Lanjutan' },
+    { id: 'katakana_basic', name: 'Katakana Dasar' },
+    { id: 'katakana_advanced', name: 'Katakana Lanjutan' },
+];
+
 
 const PracticePage: React.FC = () => {
     const { state, dispatch } = useAppContext();
     const { session } = state;
     const [questionCount, setQuestionCount] = useState(10);
     const [selectedType, setSelectedType] = useState<QuestionType | 'campuran'>('campuran');
+    const [selectedKanaSets, setSelectedKanaSets] = useState<KanaSet[]>(['hiragana_basic', 'katakana_basic']);
+    
+    const handleKanaSetChange = (setId: KanaSet) => {
+        setSelectedKanaSets(prev => {
+            const isChecked = prev.includes(setId);
+            if (isChecked && prev.length === 1) {
+                return prev; // Prevent unchecking the last item
+            }
+            return isChecked
+                ? prev.filter(s => s !== setId)
+                : [...prev, setId];
+        });
+    };
     
     const startPractice = () => {
-        const questions = getRandomQuestions(questionCount, selectedType === 'campuran' ? undefined : selectedType);
+        const questions = getRandomQuestions(
+            questionCount,
+            selectedType === 'campuran' ? undefined : selectedType,
+            'Lokal',
+            [],
+            selectedType === 'kana' ? selectedKanaSets : undefined
+        );
         dispatch({ type: 'START_SESSION', payload: { questions, isTryout: false } });
     };
 
@@ -69,7 +96,7 @@ const PracticePage: React.FC = () => {
         <div className="max-w-lg mx-auto text-center">
             <h1 className="text-3xl font-bold mb-4">Mulai Latihan Baru</h1>
             <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md space-y-6">
-                <div>
+                <div className="text-left">
                     <label className="block text-lg font-medium mb-2">Jumlah Soal</label>
                     <select value={questionCount} onChange={e => setQuestionCount(Number(e.target.value))} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
                         <option value={5}>5</option>
@@ -77,14 +104,38 @@ const PracticePage: React.FC = () => {
                         <option value={20}>20</option>
                     </select>
                 </div>
-                <div>
+                <div className="text-left">
                     <label className="block text-lg font-medium mb-2">Tipe Soal</label>
                     <select value={selectedType} onChange={e => setSelectedType(e.target.value as any)} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600">
                         <option value="campuran">Campuran</option>
                         {QUESTION_TYPES.map(type => <option key={type.id} value={type.id}>{type.name}</option>)}
                     </select>
                 </div>
-                <button onClick={startPractice} className="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors">
+
+                {selectedType === 'kana' && (
+                    <div className="text-left">
+                        <label className="block text-lg font-medium mb-2">Pilih Set Kana</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {KANA_SETS.map(set => (
+                                <label key={set.id} className="flex items-center space-x-3 p-3 bg-gray-100 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600">
+                                    <input
+                                        type="checkbox"
+                                        className="form-checkbox h-5 w-5 text-indigo-600 rounded-sm focus:ring-indigo-500"
+                                        checked={selectedKanaSets.includes(set.id)}
+                                        onChange={() => handleKanaSetChange(set.id)}
+                                    />
+                                    <span>{set.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <button 
+                    onClick={startPractice} 
+                    disabled={selectedType === 'kana' && selectedKanaSets.length === 0}
+                    className="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
+                >
                     Mulai
                 </button>
             </div>

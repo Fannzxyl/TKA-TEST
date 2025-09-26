@@ -157,14 +157,21 @@ export const localQuestions: Question[] = [
     { id: "q_mc09", type: "mc", stem: "あついとき、なにを のみますか。", choices: ["つめたい みず", "あたたかい コーヒー", "スープ", "おさけ"], correctKeys: ["つめたい みず"], explain: "Saat cuaca panas (あつい), minum air dingin (つめたい みず) adalah pilihan yang umum." },
 
     // Kana
-    { id: "q_k01", type: "kana", kana_question: "さかな", choices: ["sakana", "sanaka", "sukana", "sokana"], correctKeys: ["sakana"], explain: "さ(sa) か(ka) な(na) dibaca 'sakana'." },
-    { id: "q_k02", type: "kana", kana_question: "くるま", choices: ["kuruma", "karuma", "keruma", "koruma"], correctKeys: ["kuruma"], explain: "く(ku) る(ru) ま(ma) dibaca 'kuruma'." },
-    { id: "q_k03", type: "kana", kana_question: "でんわ", choices: ["denwa", "danwa", "dinwa", "donwa"], correctKeys: ["denwa"], explain: "で(de) ん(n) わ(wa) dibaca 'denwa'." },
-    { id: "q_k04", type: "kana", kana_question: "きっぷ", choices: ["kippu", "kibbu", "kipu", "kitsu"], correctKeys: ["kippu"], explain: "き(ki) + っ (konsonan ganda p) + ぷ(pu) dibaca 'kippu'." },
-    { id: "q_k05", type: "kana", kana_question: "びょういん", choices: ["byouin", "biyouin", "bouin", "byoin"], correctKeys: ["byouin"], explain: "びょ(byo) + う(u) + い(i) + ん(n) dibaca 'byouin'." },
-    { id: "q_k06", type: "kana", romaji_answer: "arigatou", choices: ["ありがとう", "ありかとう", "ありがと", "ありかと"], correctKeys: ["ありがとう"], explain: "a(あ) ri(り) ga(が) to(と) u(う) ditulis 'ありがとう'." },
-    { id: "q_k07", type: "kana", romaji_answer: "sayounara", choices: ["さようなら", "さよなら", "さうよなら", "さようなる"], correctKeys: ["さようなら"], explain: "sa(さ) you(よう) na(な) ra(ら) ditulis 'さようなら'." },
-    { id: "q_k08", type: "kana", kana_question: "がくせい", choices: ["gakusei", "gakkusei", "gakusai", "gakkusai"], correctKeys: ["gakusei"], explain: "が(ga) く(ku) せ(se) い(i) dibaca 'gakusei'." },
-    { id: "q_k09", type: "kana", kana_question: "コンピューター", choices: ["konpyuutaa", "konbyuutaa", "conpyuta", "konpyuuta"], correctKeys: ["konpyuutaa"], explain: "コ(ko) ン(n) ピュー(pyuu) ター(taa) dibaca 'konpyuutaa'." },
-    { id: "q_k10", type: "kana", romaji_answer: "konnichiwa", choices: ["こんにちは", "こんいちは", "こにちは", "こんいちは"], correctKeys: ["こんにちは"], explain: "ko(こ) n(ん) ni(に) chi(ち) wa(は) ditulis 'こんにちは'. Partikel は dibaca 'wa' di sini." }
+    { id: "q_k01", type: "kana", kana_question: "さかな", choices: ["sakana", "sanaka", "sukana", "sokana"], correctKeys: ["sakana"], explain: "さ(sa) か(ka) な(na) dibaca 'sakana'.", kana_set: "hiragana_basic" },
+    { id: "q_k02", type: "kana", kana_question: "くるま", choices: ["kuruma", "karuma", "keruma", "koruma"], correctKeys: ["kuruma"], explain: "く(ku) る(ru) ま(ma) dibaca 'kuruma'.", kana_set: "hiragana_basic" },
+    { id: "q_k03", type: "kana", kana_question: "でんわ", choices: ["denwa", "danwa", "dinwa", "donwa"], correctKeys: ["denwa"], explain: "で(de) ん(n) わ(wa) dibaca 'denwa'.", kana_set: "hiragana_advanced" },
+    { id: "q_k04", type: "kana", kana_question: "きっぷ", choices: ["kippu", "kibbu", "kipu", "kitsu"], correctKeys: ["kippu"], explain: "き(ki) + っ (konsonan ganda p) + ぷ(pu) dibaca 'kippu'.", kana_set: "hiragana_advanced" },
+    { id: "q_k05", type: "kana", kana_question: "びょういん", choices: ["byouin", "biyouin", "bouin", "byoin"], correctKeys: ["byouin"], explain: "びょ(byo) + う(u) + い(i) + ん(n) dibaca 'byouin'.", kana_set: "hiragana_advanced" },
+    { id: "q_k06", type: "kana", romaji_answer: "arigatou", choices: ["ありがとう", "ありかとう", "ありがと", "ありかと"], correctKeys: ["ありがとう"], explain: "a(あ) ri(り) ga(が) to(と) u(う) ditulis 'ありがとう'.", kana_set: "hiragana_advanced" },
+    { id: "q_k07", type: "kana", romaji_answer: "sayounara", choices: ["さようなら", "さよなら", "さうよなら", "さようなる"], correctKeys: ["さようなら"], explain: "sa(さ) you(よう) na(な) ra(ら) ditulis 'さようなら'.", kana_set: "hiragana_advanced" },
+    { id: "q_k08", type: "kana", kana_question: "がくせい", choices: ["gakusei", "gakkusei", "gakusai", "gakkusai"], correctKeys: ["gakusei"], explain: "が(ga) く(ku) せ(se) い(i) dibaca 'gakusei'.", kana_set: "hiragana_advanced" },
+    { id: "q_k09", type: "kana", kana_question: "コンピューター", choices: ["konpyuutaa", "konbyuutaa", "conpyuta", "konpyuuta"], correctKeys: ["konpyuutaa"], explain: "コ(ko) ン(n) ピュー(pyuu) ター(taa) dibaca 'konpyuutaa'.", kana_set: "katakana_advanced" },
+    { id: "q_k10", type: "kana", romaji_answer: "konnichiwa", choices: ["こんにちは", "こんいちは", "こにちは", "こんいちは"], correctKeys: ["こんにちは"], explain: "ko(こ) n(ん) ni(に) chi(ち) wa(は) ditulis 'こんにちは'. Partikel は dibaca 'wa' di sini.", kana_set: "hiragana_basic" },
+    { id: "q_k11", type: "kana", kana_question: "ねこ", choices: ["neko", "nako", "noku", "neke"], correctKeys: ["neko"], explain: "ね(ne) こ(ko) dibaca 'neko'.", kana_set: "hiragana_basic" },
+    { id: "q_k12", type: "kana", kana_question: "カメラ", choices: ["kamera", "kamira", "komera", "kameraa"], correctKeys: ["kamera"], explain: "カ(ka) メ(me) ラ(ra) dibaca 'kamera'.", kana_set: "katakana_basic" },
+    { id: "q_k13", type: "kana", kana_question: "バス", choices: ["basu", "besu", "bosu", "pasu"], correctKeys: ["basu"], explain: "バ(ba) ス(su) dibaca 'basu'.", kana_set: "katakana_advanced" },
+    { id: "q_k14", type: "kana", kana_question: "アメリカ", choices: ["amerika", "amarika", "amereka", "ameriko"], correctKeys: ["amerika"], explain: "ア(a) メ(me) リ(ri) カ(ka) dibaca 'amerika'.", kana_set: "katakana_basic" },
+    { id: "q_k15", type: "kana", kana_question: "ジュース", choices: ["juusu", "jusu", "jyuusu", "jisu"], correctKeys: ["juusu"], explain: "ジュ(ju) ー(u) ス(su) dibaca 'juusu'.", kana_set: "katakana_advanced" },
+    { id: "q_k16", type: "kana", romaji_answer: "terebi", choices: ["テレビ", "テリビ", "テレピ", "テリピ"], correctKeys: ["テレビ"], explain: "te(テ) re(レ) bi(ビ) ditulis 'テレビ'.", kana_set: "katakana_advanced" },
+    { id: "q_k17", type: "kana", romaji_answer: "gohan", choices: ["ごはん", "こはん", "ごは", "こは"], correctKeys: ["ごはん"], explain: "go(ご) ha(は) n(ん) ditulis 'ごはん'.", kana_set: "hiragana_advanced" }
 ];
